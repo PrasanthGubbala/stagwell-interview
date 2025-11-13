@@ -27,10 +27,15 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         # TODO: Add validation logic here
         # - Check password length (minimum 8 characters)
         # - Check password and password_confirm match
+        if attrs.get('password') != attrs.get('password_confirm'):
+            raise serializers.ValidationError({'password':'doesnt match'})
         return attrs
     
     def create(self, validated_data):
         # TODO: Create user with hashed password
         # Remove password_confirm from validated_data before creating user
-        pass
+        validated_data.pop('password_confirm')
+        password = validated_data.pop('password')
+        user = User.objects.create_user(**validated_data, password = password)
+        return user 
 

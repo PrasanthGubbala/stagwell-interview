@@ -41,6 +41,18 @@ def register(request):
     
     # TODO: Add validation and user creation logic here
     # Hint: Use serializer.is_valid(), serializer.save(), and RefreshToken
+    if serializer.is_valid():
+        user = serializer.save()
+        tokens = get_tokens(user) # TODO 
+        return Response( {
+        "access": tokens['access'],
+        "refresh": tokens['refresh'],
+        "user": {
+            "id": user.id,
+            "username": user.username,
+            "email": user.email
+        }
+    }, status = status.HTTP_201_CREATED)
     
     return Response(
         {"detail": "Registration endpoint not implemented yet"},
@@ -86,9 +98,23 @@ def login(request):
     # TODO: Add authentication logic here
     # Hint: Use User.objects.get() and user.check_password()
     # Then generate tokens using RefreshToken
-    
-    return Response(
-        {"detail": "Login endpoint not implemented yet"},
-        status=status.HTTP_501_NOT_IMPLEMENTED
-    )
+    user = User.objects.get(username = username)
+    if not user.check_password(password):
+        raise Exception('INvalid')
+    except User.DoesNotExist:
+        return Response({"detail" : 'Invalid credentials'})
+
+
+    tokens = get_tokens(user)
+    return Response( {
+        "access":tokens['access'] ,
+        "refresh":tokens['refresh'],
+        "user": {
+            "id": user.id,
+            "username": user.username,
+            "email": user.email
+        }
+    }, status = status.HTTP_200_OK)
+
+
 

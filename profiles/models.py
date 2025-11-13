@@ -18,6 +18,9 @@ class UserProfile(models.Model):
     """
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     location = models.CharField(max_length=255, blank=True, null=True, help_text="City name for weather lookup")
+    phone_number = models.CharField(max_length=10, blank = True, null = True, help_text = 'Enter phone nu')
+    date_of_birth = models.DateField(blank = True, null=True)
+    bio = models.TextField(blank=True, null=True)
     # TODO: Add more fields as needed
     
     created_at = models.DateTimeField(auto_now_add=True)
